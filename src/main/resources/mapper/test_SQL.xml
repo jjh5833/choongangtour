@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="test">
+<select id="adminBoard"  resultType="HashMap"><!--  admin 에서 보여주는 게시판형 리스트 -->
+	select * from boardRegionview 
+	<if test="searchName =='b_title'">
+		WHERE b_title LIKE CONCAT('%',#{search},'%') 
+	</if>
+	<if test="searchName =='re_category'">
+		WHERE re_category LIKE CONCAT('%',#{search},'%') 
+	</if>
+	ORDER BY b_no asc LIMIT #{startPage}, #{lastPage}
+	</select>
+<select id="adminTotalList"  resultType="Integer"><!--  admin 에서 보여주는 게시판형 리스트 -->
+	select count(*) from boardRegionview 
+	<if test="searchName =='b_title'">
+		WHERE b_title LIKE CONCAT('%',#{search},'%') 
+	</if>
+	<if test="searchName =='re_category'">
+		WHERE re_category LIKE CONCAT('%',#{search},'%') 
+	</if>
+	
+	</select>
+	
+	<select id="adminModify" resultType="HashMap" parameterType="Integer"><!--  수정하기 페이지 보여주는 페이지 리스트 -->
+	select * 
+	from boardRegionview 
+	where b_no =#{b_no}
+	</select>
+	
+	<update id="adminUpdate" parameterType="HashMap" >
+	update boardRegion set re_category = (select re_category from region where re_no = #{re_no}), b_title=#{b_title}, b_content= #{b_content}, b_addr=#{b_addr}, b_web=#{b_web}, 
+	b_tele=#{b_tele}, b_time=#{b_time}, b_price=#{b_price}, b_tip= #{b_tip}, b_date= #{b_date}<if test="b_url != ''">, b_url=#{b_url}, b_imgTitle=#{b_imgTitle}</if>where b_no = #{b_no}
+	 </update>
+	
+	
+    <select id="board" resultType="HashMap"> <!--  상세정보 관광지 -->
+    select * from boardRegionview where re_no= #{re_no} and b_title = #{b_title} and visi =#{visi}
+    </select>
+    <select id="board2" resultType="HashMap"><!--  상세정보 이전 구역 관광지들 보여줌 -->
+    select * from boardRegionview2 where re_no= #{re_no} and visi =#{visi}  order by b_no
+    </select>
+	
+	<insert id="adminWrite" parameterType="HashMap">
+	INSERT INTO boardRegion (re_no, b_title, b_content, re_category, b_addr, b_web, 
+	b_tele, b_time, b_price, b_tip,<if test="b_url != null">b_url, b_imgTitle</if>) VALUES (#{re_no}, #{b_title}, #{b_content},
+	(select re_category from region where re_no=#{re_no}),  #{b_addr}, #{b_web},#{b_tele},#{b_time},#{b_price} ,#{b_tip} ,
+	 <if test="b_url != null"> #{b_url}, #{b_imgTitle}</if>)
+	</insert>
+	
+	
+	
+	<update id="adminDelete"  parameterType="HashMap" >
+		update boardRegion set visi= 0 where b_no =#{b_no}
+	</update>
+	<update id="adminCancelDelete"  parameterType="HashMap" >
+		update boardRegion set visi= 1 where b_no =#{b_no}
+	</update>
+	
+	
+	
+	
+	<!-- 아래로 쭉 샛별 추가 1012 -->
+	<insert id="userWrite" parameterType="HashMap">
+		INSERT INTO userBoardRegion(re_no, b_title, b_content, l_no
+		<if test="b_url != null">, b_url, b_imgTitle</if>
+		) VALUES
+		(#{re_no}, #{b_title}, #{b_content},
+		(SELECT l_no FROM login
+		WHERE l_id=#{l_id})
+		<if test="b_url != null">, #{b_url}, #{b_imgTitle}</if>
+		)
+	</insert>
+
+	<select id="totalCount" parameterType="HashMap"
+		resultType="HashMap">
+		SELECT count(*) as totalCount
+		FROM userBoardRegion
+		<if test="searchName == 'title' and search != null">
+			WHERE b_title LIKE CONCAT('%', #{search }, '%')
+		</if>
+		<if test="searchName == 'content' and search != null">
+			WHERE b_content LIKE CONCAT('%', #{search }, '%')
+		</if>
+		<if test="searchName == 'writer' and search != null">
+			WHERE l_no LIKE CONCAT('%', #{search }, '%')
+		</if>
+	</select>
+
+	<select id="userBoard" parameterType="HashMap"
+		resultType="HashMap">
+		SELECT * FROM ubrview
+		<if test="searchName == 'title' and search != null">
+			WHERE b_title LIKE CONCAT('%', #{search }, '%')
+		</if>
+		<if test="searchName == 'content' and search != null">
+			WHERE b_content LIKE CONCAT('%', #{search }, '%')
+		</if>
+		<if test="searchName == 'writer' and search != null">
+			WHERE l_no LIKE CONCAT('%', #{search }, '%')
+		</if>
+
+		LIMIT #{startPage }, #{lastPage }
+	</select>
+
+	<select id="ubDetail" parameterType="HashMap"
+		resultType="HashMap">
+		SELECT * FROM ubrview WHERE b_no=#{b_no}
+	</select>
+
+	<update id="ubLike" parameterType="HashMap">
+		UPDATE userBoardRegion SET
+		b_like=b_like+1 WHERE b_no=#{b_no}
+	</update>
+
+	<update id="ubHate" parameterType="HashMap">
+		UPDATE userBoardRegion SET
+		b_hate=b_hate+1 WHERE b_no=#{b_no}
+	</update>
+
+	<delete id="ubDelete" parameterType="HashMap">
+		DELETE FROM userBoardRegion
+		WHERE b_no=#{b_no};
+	</delete>
+
+	<update id="ubUpdate" parameterType="TestDTO">
+		UPDATE userBoardRegion SET re_no=#{re_no}, b_title=#{b_title},
+		b_content=#{b_content}, l_no=#{l_no}
+		<if test="b_url != ''">, b_url=#{b_url}, b_imgTitle=#{b_imgTitle} </if>
+		WHERE b_no=#{b_no};
+	</update>
+
+	<select id="hotList" parameterType="HashMap"
+		resultType="HashMap">
+		SELECT b_no, LENGTH(b_title),
+		IF(LENGTH(b_title) > 45,
+		CONCAT(SUBSTRING(b_title , 1, 20), '...'),
+		b_title)
+		AS b_title, b_like, b_date FROM ubrview ORDER BY b_like DESC LIMIT 0, 5
+	</select>
+
+</mapper>
+    

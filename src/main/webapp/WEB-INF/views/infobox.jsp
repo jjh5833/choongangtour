@@ -5,8 +5,8 @@
 <script type="text/javascript">
 window.onload = function() {
 function masking(email) {	
-	var len = email.split('@')[0].length-3;
-	return email.replace(new RegExp('.(?=.{0,' + len + '}@)', 'g'), '*');	 
+		var len = email.split('@')[0].length-3;
+		return email.replace(new RegExp('.(?=.{0,' + len + '}@)', 'g'), '*');	 
 	}
 	const eemail = document.querySelector(".email");
 	eemail.innerHTML = masking("${infobox.l_email }");

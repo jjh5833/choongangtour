@@ -111,7 +111,7 @@ textarea {
 					<input type="file" name="image" id="file" accept="*" />
 					<button type="button" onclick="fileToImgbb()">파일 업로드</button>
 					파일 선택 후 꼭 업로드 버튼을 눌러주세요<br> <input type="hidden" name="key"
-						value="f6d096ba35b6760c08fb692ed72043ad"> <input
+						value="a67496e6d33c48ce12909ee8ce66d887"> <input
 						type="hidden" name="b_url" id="b_url"> <input
 						type="hidden" name="b_imgTitle" id="b_imgTitle">
 					<button type="submit">쓰기</button>

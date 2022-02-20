@@ -3,35 +3,41 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="login">
 	<select id="login" parameterType="HashMap" resultType="HashMap">
-		SELECT l_no, l_name, l_id 
-      FROM loginview 
-      WHERE l_id=#{l_id} AND (AES_DECRYPT(UNHEX(l_pw), 'djo'))=#{l_pw}
-   </select>
+		SELECT
+		l_no, l_name, l_id
+		FROM loginview
+		WHERE l_id=#{l_id} AND
+		(AES_DECRYPT(UNHEX(l_pw), 'djo'))=#{l_pw}
+
+	</select>
 
 	<insert id="join" parameterType="HashMap">
-      INSERT INTO login (`l_name`, `l_id`, `l_pw`, `l_email`) 
-      VALUES (#{l_name},#{l_id}, HEX(AES_ENCRYPT(#{l_pw},'djo')), #{l_email})
-   </insert> 
+		INSERT INTO login (`l_name`, `l_id`, `l_pw`, `l_email`)
+		VALUES (#{l_name},#{l_id}, HEX(AES_ENCRYPT(#{l_pw},'djo')), #{l_email})
+	</insert>
 
 	<select id="checkID" parameterType="String" resultType="String">
 		SELECT
 		count(*) FROM loginview WHERE l_id=#{l_id}
 	</select>
 
-	<select id="infobox" parameterType="HashMap" resultType="HashMap">
+	<select id="infobox" parameterType="HashMap"
+		resultType="HashMap">
 		SELECT *
 		FROM login
 		WHERE l_id=#{l_id}
 	</select>
-	
+
 	<select id="myinfo" parameterType="HashMap" resultType="HashMap">
 		SELECT *
-		FROM login WHERE l_id=#{l_id} AND (AES_DECRYPT(UNHEX(l_pw), 'djo'))=#{l_pw}
+		FROM login WHERE l_id=#{l_id} AND (AES_DECRYPT(UNHEX(l_pw),
+		'djo'))=#{l_pw}
 	</select>
 
 	<update id="changeInfo" parameterType="HashMap">
 		UPDATE login SET
-		l_name=#{l_name}, l_pw=HEX(AES_ENCRYPT(#{l_pw},'djo')) WHERE l_no=${l_no}
+		l_name=#{l_name}, l_pw=HEX(AES_ENCRYPT(#{l_pw},'djo')) WHERE
+		l_no=${l_no}
 	</update>
 
 	<delete id="deletemember" parameterType="HashMap">
@@ -52,8 +58,9 @@
 
 	<update id="typeSave" parameterType="HashMap">
 		UPDATE login
-		SET l_type = #{l_type}
+		SET l_type =
+		#{l_type}
 		WHERE l_id = #{l_id}
 	</update>
-	
+
 </mapper>
